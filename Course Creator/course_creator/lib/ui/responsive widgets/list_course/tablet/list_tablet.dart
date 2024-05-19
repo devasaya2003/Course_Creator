@@ -1,5 +1,4 @@
 import 'package:course_creator/logic/provider/course_provider.dart';
-import 'package:course_creator/ui/responsive%20widgets/list_course/desktop/widgets/course_list_main.dart';
 import 'package:course_creator/ui/responsive%20widgets/list_course/desktop/widgets/resource_list.dart';
 import 'package:course_creator/ui/responsive%20widgets/list_course/tablet/widgets/course_list_main_tablet.dart';
 import 'package:flutter/material.dart';

@@ -126,8 +126,8 @@ class ResourceList extends StatelessWidget {
                       ),
                       trailing: IconButton(
                         icon: value.resources[index] is CourseFile
-                            ? Icon(Icons.delete)
-                            : Icon(Icons.menu),
+                            ? const Icon(Icons.delete)
+                            : const Icon(Icons.menu),
                         onPressed: () async {
                           log('Edit Resource tapped');
                           if (value.resources[index] is CourseFile) {

@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:course_creator/logic/constants/constants.dart';
 import 'package:course_creator/logic/models/data_models.dart';
 import 'package:course_creator/logic/provider/course_provider.dart';
-import 'package:course_creator/ui/responsive%20widgets/list_course/desktop/widgets/attributes_list.dart';
 import 'package:course_creator/ui/responsive%20widgets/list_course/desktop/widgets/module_name.dart';
 import 'package:course_creator/ui/responsive%20widgets/list_course/tablet/widgets/attributes_list_tablet.dart';
 import 'package:course_creator/ui/responsive%20widgets/list_course/tablet/widgets/module_name_tablet.dart';

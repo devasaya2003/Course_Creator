@@ -1,6 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:course_creator/logic/constants/constants.dart';
 import 'package:course_creator/logic/models/data_models.dart';
 import 'package:course_creator/logic/provider/course_provider.dart';
@@ -239,7 +237,7 @@ class NavButton extends StatelessWidget {
                             cacheControl: '3600', upsert: false),
                       );
 
-                  String getdownloadUrl = await supabase.storage
+                  String getdownloadUrl = supabase.storage
                       .from('resource_bucket')
                       .getPublicUrl(fileName)
                       .toString();
@@ -256,23 +254,6 @@ class NavButton extends StatelessWidget {
                   log(e.toString());
                 }
               }
-
-              // if (fileBytes != null) {
-              //   try {
-              //     // Use the fileBytes, fileName, and filePath as needed in your app
-              //     final directory = await getApplicationDocumentsDirectory();
-              //     final File newFile = File('${directory.path}/$fileName');
-              //     await newFile.writeAsBytes(fileBytes);
-              //     log('File name: $fileName');
-              //     log('Original file path: $filePath');
-              //     log('New file path: ${newFile.path}');
-              //     ScaffoldMessenger.of(context).showSnackBar(
-              //         SnackBar(content: Text('File uploaded successfully')));
-              //   } catch (e) {
-              //     ScaffoldMessenger.of(context).showSnackBar(
-              //         SnackBar(content: Text('Failed to upload file: $e')));
-              //   }
-              // }
             }
           },
           buttonStyleData: ButtonStyleData(

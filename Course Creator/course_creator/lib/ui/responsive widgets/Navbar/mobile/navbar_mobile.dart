@@ -1,6 +1,12 @@
 import 'dart:developer';
+import 'package:course_creator/logic/models/data_models.dart';
+import 'package:course_creator/logic/provider/course_provider.dart';
+import 'package:course_creator/logic/provider/resource_provider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final items = {
   'Create Module': {
@@ -109,7 +115,163 @@ class NavButton extends StatelessWidget {
               )
               .toList(),
           // value: selectedValue,
-          onChanged: (value) {},
+          onChanged: (value) async {
+            
+          if (value == 'Create Module') {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  String moduleName = "";
+                  return AlertDialog(
+                    title: const Text('Create Module'),
+                    content: TextField(
+                      decoration: const InputDecoration(
+                          icon: Icon(Icons.edit), hintText: "Module Name"),
+                      onChanged: (value) {
+                        moduleName = value;
+                      },
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Add'),
+                        onPressed: () {
+                          if (moduleName.isNotEmpty) {
+                            Provider.of<CourseProvider>(context, listen: false)
+                                .addModule(moduleName);
+                            Navigator.of(context).pop();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Module Name cannot be empty!'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+
+            if (value == 'Add Link') {
+              log('Add Link tapped');
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  String linkUrl = "";
+                  String linkName = "";
+                  return AlertDialog(
+                    title: const Text('Add Link'),
+                    content: SizedBox(
+                      
+                      child: Column(
+                        children: [
+                          TextField(
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.link), hintText: "Url"),
+                            onChanged: (value) {
+                              linkUrl = value;
+                            },
+                          ),
+                          TextField(
+                            decoration: const InputDecoration(
+                              icon: Icon(Icons.edit),
+                              hintText: "Name",
+                            ),
+                            onChanged: (value) {
+                              linkName = value;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Add'),
+                        onPressed: () {
+                          if (linkName.isNotEmpty && linkUrl.isNotEmpty) {
+                            Provider.of<ResourceProvider>(context,
+                                    listen: false)
+                                .addLinkResourceThroughText(linkUrl, linkName);
+                            Navigator.of(context).pop();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text('Both fields must be filled out!'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+
+            if (value == 'Upload') {
+              log("Upload is tapped");
+              // await
+              final result = await FilePicker.platform.pickFiles();
+              final SupabaseClient supabase = Supabase.instance.client;
+
+              if (result == null) return;
+
+              final file = result.files.first;
+              final fileName = file.name;
+              // final filePath = file.path;
+              final fileBytes = file.bytes;
+
+              log(file.toString());
+              log(fileName.toString());
+              // log(filePath.toString());
+              log(fileBytes.toString());
+
+              if (fileBytes != null && fileName.isNotEmpty) {
+                try {
+                  final avatarFile = fileBytes;
+                  final String path = await supabase.storage
+                      .from('resource_bucket')
+                      .uploadBinary(
+                        fileName,
+                        avatarFile,
+                        fileOptions: const FileOptions(
+                            cacheControl: '3600', upsert: false),
+                      );
+
+                  String getdownloadUrl = supabase.storage
+                      .from('resource_bucket')
+                      .getPublicUrl(fileName)
+                      .toString();
+
+                  log(getdownloadUrl);
+                  log("Upload Successful!");
+                  Provider.of<ResourceProvider>(context,listen: false).addFileResource(
+                    CourseFile(
+                      downloadUrl: getdownloadUrl,
+                      name: fileName,
+                    ),
+                  );
+                } catch (e) {
+                  log(e.toString());
+                }
+              }
+            }
+          },
           buttonStyleData: ButtonStyleData(
             height: 40,
             width: 80,
